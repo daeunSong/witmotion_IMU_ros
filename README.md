@@ -15,7 +15,7 @@ sudo apt-get install libqt5serialport5-dev
 ### Building
 ```sh
 cd ros2_ws/src
-git clone -b ros2 --recursive https://github.com/daeunSong/witmotion_IMU_ros.git witmotion_ros
+git clone -b robotixx-ros2-humble --recursive https://github.com/daeunSong/witmotion_IMU_ros.git witmotion_ros
 colcon build --packages-select witmotion_ros
 source install/setup.bash
 ```
@@ -23,9 +23,13 @@ If compilation fails, first check the directory `src/witmotion_ros/witmotion-uar
 
 
 ## Usage
+Copy the udev rule.
+```sh
+sudo cp ./config/99-imu.rules /etc/udev/rules.d/
+```
 The example is for Witmotion WT61C sensor, please refer to the other sample launch files for another sensor.
 ```sh
-ros2 launch witmotion_ros wt61c.py
+ros2 launch witmotion_ros wt901.launch.py
 ```
 
 ## Configuration
