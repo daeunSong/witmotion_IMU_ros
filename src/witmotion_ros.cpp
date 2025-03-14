@@ -13,6 +13,7 @@ bool ROSWitmotionSensorController::imu_enable_orientation = false;
 bool ROSWitmotionSensorController::imu_have_accel = false;
 bool ROSWitmotionSensorController::imu_have_velocities = false;
 bool ROSWitmotionSensorController::imu_have_orientation = false;
+bool ROSWitmotionSensorController::imu_have_angles = false;
 bool ROSWitmotionSensorController::imu_native_orientation = false;
 std::vector<double> ROSWitmotionSensorController::imu_accel_covariance = {
     -1, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -471,11 +472,11 @@ void ROSWitmotionSensorController::imu_process(
     x *= DEG2RAD;
     y *= DEG2RAD;
     z *= DEG2RAD;
-    imu_have_orientation = !imu_native_orientation;
+    imu_have_angles = true;
     break;
   case pidOrientation:
     decode_orientation(packet, qx, qy, qz, qw);
-    imu_have_orientation = imu_native_orientation;
+    imu_have_orientation = true;
     break;
   default:
     return;
@@ -490,9 +491,9 @@ void ROSWitmotionSensorController::imu_process(
     msg.angular_velocity.y = wy;
     msg.angular_velocity.z = wz;
   }
-  if (imu_enable_orientation && imu_have_orientation) {
+  if (imu_enable_orientation && imu_have_orientation || imu_have_angles) {
     tf2::Quaternion tf_orientation;
-    if (imu_native_orientation) {
+    if (imu_native_orientation && imu_have_orientation) {
       tf_orientation.setX(qx);
       tf_orientation.setY(qy);
       tf_orientation.setZ(qz);
@@ -504,7 +505,7 @@ void ROSWitmotionSensorController::imu_process(
   }
   if ((imu_enable_accel == imu_have_accel) &&
       (imu_enable_velocities == imu_have_velocities) &&
-      (imu_enable_orientation == imu_have_orientation)) {    
+      (imu_enable_orientation == (imu_have_orientation || imu_have_angles))) {    
     imu_publisher->publish(msg);
     
     imu_have_accel = false;

@@ -74,6 +74,7 @@ private:
     static std::vector<double> imu_velocity_covariance;
     static bool imu_enable_orientation;
     static bool imu_have_orientation;
+    static bool imu_have_angles;
     static bool imu_native_orientation;
     static std::vector<double> imu_orientation_covariance;
     static rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_publisher;
